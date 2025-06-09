@@ -52,49 +52,52 @@ export default function ChannelPage() {
     return `${days} days ago`;
   };
 
+  const filteredVideos = videos.filter((v) => v.channelName === channel?.channelName);
+
   if (error) return <div className="text-red-500 p-4">Error: {error}</div>;
   if (!channel) return <div className="text-white p-4">Loading channel...</div>;
 
   return (
     <div className="bg-black text-white min-h-screen">
+      {/* Banner */}
       <div
         className="w-full sm:h-[300px] bg-cover bg-center relative"
         style={{ backgroundImage: `url(${channel.channelBanner})` }}
       />
 
+      {/* Channel Header */}
       <div className="px-6 py-4 flex flex-col font-Roboto gap-4 sm:flex-row items-start sm:items-center justify-between">
         <div className="flex items-start sm:items-center space-x-4">
           <img
             src={channel.channelLogo || logo}
             alt="Channel Logo"
-            className="rounded-full w-52 h-52 borde object-cover object-center"
+            className="rounded-full w-52 h-52 object-cover object-center"
           />
-
           <div>
-            <h1 className="text-5xl  font-bold">{channel.channelName}</h1>
-            <p className="text-gray-400 text-xl ">
+            <h1 className="text-5xl font-bold">{channel.channelName}</h1>
+            <p className="text-gray-400 text-xl">
               <span className="text-2xl font-semibold text-gray-200">
-                @{channel.channelName}{" "}
-              </span>
-              • {channel.subscribers} subscribers •{" "}
-              {videos.filter((v) => v.channelName === channelName).length}{" "}
-              videos
+                @{channel.channelName}
+              </span>{" "}
+              • {channel.subscribers} subscribers • {filteredVideos.length} videos
             </p>
-            <p className="text-gray-400 text-xl">{videos.find((v) => v.channelName === channelName)?.description} <span className="text-white">... more</span></p>
+            <p className="text-gray-400 text-xl">
+              {filteredVideos[0]?.description} <span className="text-white">... more</span>
+            </p>
             <h1 className="text-blue-500 text-md">
-              {videos.find((v) => v.channelName === channelName)?.videoUrl}
+              {filteredVideos[0]?.videoUrl}
             </h1>
             <button
-          onClick={handleSubscribe}
-          className="mt-8 sm:mt-0 bg-white text-black px-6 py-2 rounded-full font-medium hover:bg-gray-300"
-        >
-          {isSubscribed ? "Unsubscribe" : "Subscribe"}
-        </button>
+              onClick={handleSubscribe}
+              className="mt-8 sm:mt-0 bg-white text-black px-6 py-2 rounded-full font-medium hover:bg-gray-300"
+            >
+              {isSubscribed ? "Unsubscribe" : "Subscribe"}
+            </button>
           </div>
         </div>
-        
       </div>
 
+      {/* Channel Tabs */}
       <div className="px-6 flex space-x-6 text-sm font-medium border-b border-gray-700 mt-2">
         {[
           "Home",
@@ -118,6 +121,7 @@ export default function ChannelPage() {
         ))}
       </div>
 
+      {/* Filter Buttons */}
       <div className="px-6 py-4 flex space-x-3 text-sm">
         {["latest", "popular", "oldest"].map((type) => (
           <button
@@ -134,10 +138,10 @@ export default function ChannelPage() {
         ))}
       </div>
 
-      <div className="px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 pb-12">
-        {videos
-          .filter((video) => video.channelName === channelName)
-          .map((video, index) => (
+      {/* Videos Grid or Empty State */}
+      {filteredVideos.length > 0 ? (
+        <div className="px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 pb-12">
+          {filteredVideos.map((video) => (
             <div key={video._id} className="text-sm">
               <Link to={`/video/${video._id}`}>
                 <img
@@ -171,12 +175,25 @@ export default function ChannelPage() {
               )}
             </div>
           ))}
-      </div>
-
-      {videos.length === 0 && (
-        <p className="text-center text-gray-500 text-sm mt-4">
-          No videos uploaded yet.
-        </p>
+        </div>
+      ) : (
+        <div className="px-6 py-12 min-h-[200px] flex flex-col items-center justify-center text-gray-500">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-12 h-12 mb-3 text-gray-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14m-6 0a9 9 0 100-4.001M9 10v4"
+            />
+          </svg>
+          <p className="text-sm">No videos uploaded yet.</p>
+        </div>
       )}
     </div>
   );

@@ -27,7 +27,7 @@ const Layout = () => {
 
         {/* Main Content */}
         <main
-          className={`
+          className={` w-screen
             flex-2 transition-all duration-300 
             ${isSidebarExpanded ? "ml-10 sm:ml-48" : "ml-[10px] sm:ml-20"}
           `}
